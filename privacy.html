@@ -16,15 +16,15 @@
   </style>
 </head>
 <body>
-  <nav><a href="disclaimer.html">免責聲明</a></nav>
+  <nav><a href="disclaimer.html">免責聲明</a> · <a href="terms.html">服務條款</a></nav>
   <h1>塔羅妹 TarotMui — 私隱政策</h1>
-  <p class="muted">最後更新：2026年8月1日 · 適用於 iOS App「塔羅妹 TarotMui」（Bundle ID：com.tarotmui.TarotMui）及「塔羅妹 占卜師版」（Bundle ID：com.tarotmui.TarotMuiReader）</p>
+  <p class="muted">最後更新：2026年8月9日 · 適用於 iOS App「塔羅妹 TarotMui」（Bundle ID：com.tarotmui.TarotMui）及「塔羅妹 占卜師版」（Bundle ID：com.tarotmui.TarotMuiReader）</p>
 
   <p>我們重視你的私隱。本政策說明我們如何收集、使用、儲存及保護你的個人資料。</p>
 
   <h2>1. 我們收集的資料</h2>
   <ul>
-    <li><strong>帳戶資料</strong>：Apple ID、Google 帳戶、手機號碼（如你選擇綁定）、匿名訪客識別碼；顯示名稱、用戶名、頭像、出生日期、性別（如你自願提供）。</li>
+    <li><strong>帳戶資料</strong>：Apple ID、Google 帳戶、匿名訪客識別碼；顯示名稱、用戶名、頭像、出生日期、性別（如你自願提供）。占卜師申請或轉帳設定中，你亦可自願提供聯絡電話。</li>
     <li><strong>占卜與使用記錄</strong>：塔羅／占星／每日一牌記錄、真人諮詢與直播互動、即問即答與文章參與記錄。</li>
     <li><strong>推播相關</strong>：Apple 推播裝置 token（APNs），用於每日提醒、文章答案公布等通知；你可於系統設定關閉通知。</li>
     <li><strong>麥克風</strong>：僅在你使用語音直播或一對一語音諮詢時，經你授權後使用；我們不會在背景偷偷錄音。</li>
@@ -48,25 +48,34 @@
   <h2>3. 第三方服務</h2>
   <p>我們使用以下服務處理資料，各服務均有其私隱政策：</p>
   <ul>
-    <li><strong>Supabase</strong> — 帳戶、資料庫及雲端儲存</li>
+    <li><strong>Supabase</strong> — 帳戶、資料庫、雲端儲存，以及我們託管的 Edge Functions（伺服器端代理）</li>
+    <li><strong>FreeAstroAPI</strong> — 占星本命盤計算；你提交的出生日期／時間／地點等資料，會經我們的 Supabase Edge Function 轉傳至 FreeAstro（App 不會直接持有其 API 金鑰）</li>
+    <li><strong>AI 模型供應商</strong> — 我們會按服務配置使用 DeepSeek、OpenRouter、Groq、OpenAI 或 Gemini 等供應商生成 AI 解讀；完成服務所需的精簡資料會經我們的 Supabase Edge Function 轉傳至目前配置的供應商</li>
     <li><strong>Apple</strong> — Sign in with Apple、App Store 付款、APNs 推播</li>
     <li><strong>Google</strong> — Google 登入（如你選擇）</li>
     <li><strong>Agora</strong> — 語音直播（如你使用語音功能）</li>
   </ul>
+  <p>占星計算與 AI 解讀的典型路徑為：你的裝置 → 我們的 Supabase Edge Function → FreeAstro 或目前配置的 AI 模型供應商（HTTPS）。我們會盡量只傳送完成服務所需的最少資料（例如精簡星盤落點），不會為生成解讀而主動傳送不必要的帳戶資料。第三方如何處理及保留資料，受其各自的私隱政策及我們所用服務方案約束；請勿在輸入欄填寫身分證號碼、電話或詳細住址等敏感個人資料。</p>
 
-  <h2>4. 資料保留與刪除</h2>
-  <p>我們會在提供服務所需期間保留資料。你可於 App「設定 → 帳號與安全 → 刪除帳戶」申請刪除，或聯絡 <a href="mailto:tarotmui74@gmail.com">tarotmui74@gmail.com</a> 要求刪除個人資料；法律要求保留的記錄除外。</p>
+  <h2>4. 本機私隱選項</h2>
+  <ul>
+    <li><strong>解讀同步雲端</strong>：你可於 App「設定 → 私隱與資料」關閉占卜／解讀記錄上雲；關閉後，相關記錄主要保留於本機裝置。</li>
+    <li><strong>本機敏感欄位加密</strong>：你可選擇以裝置金鑰加密本機儲存的問題與解讀文字（金鑰存於系統 Keychain）。若你開啟雲端同步，上雲前會以明文傳送至我們的伺服器以便跨裝置還原。</li>
+  </ul>
 
-  <h2>5. 兒童私隱</h2>
+  <h2>5. 資料保留與刪除</h2>
+  <p>我們會在提供服務所需期間保留資料。你可於 App「設定 → 帳號與安全 → 刪除帳戶」申請刪除，或聯絡 <a href="mailto:tarotmui74@gmail.com">tarotmui74@gmail.com</a> 要求刪除個人資料。成功送出申請後，我們會在<strong>30 日內</strong>完成帳號及相關個人資料刪除（法律要求保留的記錄除外，例如財務／爭議相關資料）。若伺服器申請未能即時寫入，請電郵確認，我們仍會於收到確認後 30 日內處理。</p>
+
+  <h2>6. 兒童私隱</h2>
   <p>本 App 面向 17 歲或以上用戶。我們不會故意收集 17 歲以下兒童的個人資料。</p>
 
-  <h2>6. 你的權利</h2>
+  <h2>7. 你的權利</h2>
   <p>你可要求查閱、更正或刪除個人資料，或撤回推播／麥克風／相機等系統權限（可能影響部分功能）。</p>
 
-  <h2>7. 政策更新</h2>
+  <h2>8. 政策更新</h2>
   <p>我們可能更新本政策，並於此頁面公布新版本及更新日期。</p>
 
-  <h2>8. 聯絡我們</h2>
+  <h2>9. 聯絡我們</h2>
   <p>私隱相關查詢：<a href="mailto:tarotmui74@gmail.com">tarotmui74@gmail.com</a></p>
 </body>
 </html>
