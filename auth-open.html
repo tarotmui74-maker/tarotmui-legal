@@ -43,44 +43,79 @@
 
   <script>
 (function () {
+  function parsePairs(raw) {
+    var out = {};
+    String(raw || "").replace(/^#/, "").split("&").forEach(function (pair) {
+      if (!pair) return;
+      var i = pair.indexOf("=");
+      if (i < 0) return;
+      var k = decodeURIComponent(pair.slice(0, i).replace(/\+/g, " "));
+      var v = decodeURIComponent(pair.slice(i + 1).replace(/\+/g, " "));
+      if (k) out[k] = v;
+    });
+    return out;
+  }
+
   var params = new URLSearchParams(window.location.search);
-  var token = params.get("token_hash") || params.get("token") || "";
-  var type = params.get("type") || "recovery";
+  var hashRaw = (window.location.hash || "").replace(/^#/, "");
+  var hashParams = {};
+  var redirectBase = "";
+
+  // #tarotmui://auth-callback 來自電郵 {{ .RedirectTo }}
+  if (/^(tarotmui|tarotmuireader):\/\//i.test(hashRaw.split("?")[0])) {
+    redirectBase = hashRaw.split("?")[0];
+  } else {
+    hashParams = parsePairs(hashRaw);
+  }
+
+  var token =
+    params.get("token_hash") ||
+    params.get("token") ||
+    hashParams.token_hash ||
+    hashParams.token ||
+    "";
+  var access = params.get("access_token") || hashParams.access_token || "";
+  var refresh = params.get("refresh_token") || hashParams.refresh_token || "";
+  var type =
+    params.get("type") ||
+    hashParams.type ||
+    (access ? "signup" : "recovery");
   var app = (params.get("app") || "").toLowerCase();
 
-  // #tarotmui://auth-callback 或 #tarotmuireader://auth-callback（來自電郵 {{ .RedirectTo }}）
-  var hash = (window.location.hash || "").replace(/^#/, "");
-  var redirectBase = hash.split("?")[0];
   if (!redirectBase) {
-    if (app === "reader") {
-      redirectBase = "tarotmuireader://auth-callback";
-    } else {
-      redirectBase = "tarotmui://auth-callback";
-    }
+    redirectBase = app === "reader" ? "tarotmuireader://auth-callback" : "tarotmui://auth-callback";
   }
 
   var statusEl = document.getElementById("status");
   var openEl = document.getElementById("open");
+  var deep = "";
 
-  if (!token) {
+  if (token) {
+    deep =
+      redirectBase +
+      (redirectBase.indexOf("?") >= 0 ? "&" : "?") +
+      "token_hash=" + encodeURIComponent(token) +
+      "&type=" + encodeURIComponent(type);
+  } else if (access && refresh) {
+    deep =
+      redirectBase +
+      (redirectBase.indexOf("?") >= 0 ? "&" : "?") +
+      "access_token=" + encodeURIComponent(access) +
+      "&refresh_token=" + encodeURIComponent(refresh) +
+      "&type=" + encodeURIComponent(type);
+  } else {
     statusEl.className = "err";
-    statusEl.textContent = "連結不完整。請返回電郵，重新點最新一封信的按鈕。";
-    openEl.style.display = "none";
+    statusEl.textContent =
+      "連結不完整或已失效。請返回 App 登入頁，用電郵密碼登入；若未驗證，請按「重寄確認信」並只開最新一封。";
+    openEl.href = redirectBase;
+    openEl.textContent = "開啟 App";
     return;
   }
 
-  var deep =
-    redirectBase +
-    (redirectBase.indexOf("?") >= 0 ? "&" : "?") +
-    "token_hash=" + encodeURIComponent(token) +
-    "&type=" + encodeURIComponent(type);
-
   openEl.href = deep;
-
   function tryOpen() {
     window.location.href = deep;
   }
-
   tryOpen();
   setTimeout(tryOpen, 500);
 })();
