@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex" />
+  <title>星占 — 開啟 App</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang TC", "Helvetica Neue", sans-serif;
+      line-height: 1.6;
+      max-width: 420px;
+      margin: 0 auto;
+      padding: 40px 24px;
+      color: #1a1a1a;
+      background: #f7f4fb;
+      text-align: center;
+    }
+    h1 { font-size: 1.25rem; margin: 0 0 8px; }
+    p { font-size: 0.95rem; color: #444; margin: 0 0 16px; }
+    .btn {
+      display: inline-block;
+      margin-top: 8px;
+      padding: 14px 28px;
+      min-height: 44px;
+      box-sizing: border-box;
+      background: #5b3a7a;
+      color: #fff !important;
+      text-decoration: none;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 1rem;
+    }
+    .muted { color: #888; font-size: 0.85rem; margin-top: 24px; }
+    .err { color: #a33; }
+  </style>
+</head>
+<body>
+  <h1>正在開啟星占…</h1>
+  <p id="status">若未自動跳轉，請按下方按鈕。</p>
+  <p><a id="open" class="btn" href="#">開啟 App</a></p>
+  <p class="muted">請用手機開啟；電腦瀏覽器無法直接進入 App。</p>
+
+  <script>
+(function () {
+  var params = new URLSearchParams(window.location.search);
+  var token = params.get("token_hash") || params.get("token") || "";
+  var type = params.get("type") || "recovery";
+  var app = (params.get("app") || "").toLowerCase();
+
+  // #tarotmui://auth-callback 或 #tarotmuireader://auth-callback（來自電郵 {{ .RedirectTo }}）
+  var hash = (window.location.hash || "").replace(/^#/, "");
+  var redirectBase = hash.split("?")[0];
+  if (!redirectBase) {
+    if (app === "reader") {
+      redirectBase = "tarotmuireader://auth-callback";
+    } else {
+      redirectBase = "tarotmui://auth-callback";
+    }
+  }
+
+  var statusEl = document.getElementById("status");
+  var openEl = document.getElementById("open");
+
+  if (!token) {
+    statusEl.className = "err";
+    statusEl.textContent = "連結不完整。請返回電郵，重新點最新一封信的按鈕。";
+    openEl.style.display = "none";
+    return;
+  }
+
+  var deep =
+    redirectBase +
+    (redirectBase.indexOf("?") >= 0 ? "&" : "?") +
+    "token_hash=" + encodeURIComponent(token) +
+    "&type=" + encodeURIComponent(type);
+
+  openEl.href = deep;
+
+  function tryOpen() {
+    window.location.href = deep;
+  }
+
+  tryOpen();
+  setTimeout(tryOpen, 500);
+})();
+  </script>
+</body>
+</html>
